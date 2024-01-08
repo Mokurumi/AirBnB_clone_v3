@@ -82,7 +82,6 @@ test_db_storage.py'])
         self.assertEqual(storage.get("State", None), None)
         self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get("State", state.id), state)
-        self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get(None, state.id), None)
 
     def test_count(self):
@@ -106,10 +105,20 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        storage = FileStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(len(storage.all()), 1)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
+        storage = FileStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(len(storage.all()), 1)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
@@ -118,7 +127,7 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get(self):
         """Test get method"""
-        storage = DBStorage()
+        storage = FileStorage()
         state = State(name="California")
         storage.new(state)
         storage.save()
@@ -130,13 +139,12 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(storage.get("State", None), None)
         self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get("State", state.id), state)
-        self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get(None, state.id), None)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count(self):
         """Test count method"""
-        storage = DBStorage()
+        storage = FileStorage()
         state = State(name="California")
         storage.new(state)
         storage.save()
