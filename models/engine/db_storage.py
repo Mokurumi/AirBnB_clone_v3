@@ -55,13 +55,10 @@ class DBStorage:
         """
         returns the object based on the class and its ID, or None if not found
         """
-        if cls not in classes.values():
-            return None
-
         if cls and id:
-            key = cls.__name__ + '.' + id
-            if key in self.__objects:
-                return self.__objects[key]
+            for key, value in self.all(cls).items():
+                if id == value.id:
+                    return value
         return None
 
     def count(self, cls=None):
@@ -69,7 +66,11 @@ class DBStorage:
         returns the number of objects in storage matching the given class
         """
         if cls:
-            return len(self.all(cls))
+            count = 0
+            for key, value in self.all(cls).items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    count += 1
+            return count
         return len(self.all())
 
     def new(self, obj):
