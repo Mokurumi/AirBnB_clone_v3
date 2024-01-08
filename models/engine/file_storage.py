@@ -26,10 +26,10 @@ class FileStorage:
 
     def all(self, cls=None):
         """returns the dictionary __objects"""
-        if cls is not None:
+        if cls:
             new_dict = {}
             for key, value in self.__objects.items():
-                if cls == value.__class__ or cls == value.__class__.__name__:
+                if cls.__name__ == value.__class__.__name__:
                     new_dict[key] = value
             return new_dict
         return self.__objects
@@ -38,19 +38,24 @@ class FileStorage:
         """
         returns the object based on the class and its ID, or None if not found
         """
-        if cls and id:
-            key = cls.__name__ + '.' + id
-            if key in self.__objects:
-                return self.__objects[key]
+        if cls is not None and id is not None:
+            for key, value in self.__objects.items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    if id == value.id:
+                        return value
         return None
 
     def count(self, cls=None):
         """
         returns the number of objects in storage matching the given class
         """
-        if cls:
-            return len(self.all(cls))
-        return len(self.all())
+        if cls is not None:
+            count = 0
+            for key, value in self.__objects.items():
+                if cls == value.__class__ or cls == value.__class__.__name__:
+                    count += 1
+            return count
+        return len(self.__objects)
 
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""

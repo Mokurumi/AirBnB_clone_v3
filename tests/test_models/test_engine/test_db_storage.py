@@ -68,33 +68,6 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_get(self):
-        """Test get method"""
-        storage = DBStorage()
-        state = State(name="California")
-        storage.new(state)
-        storage.save()
-        self.assertEqual(storage.get(State, state.id), state)
-        self.assertEqual(storage.get(State, "1234"), None)
-        self.assertEqual(storage.get(None, None), None)
-        self.assertEqual(storage.get(None, "1234"), None)
-        self.assertEqual(storage.get(State, None), None)
-        self.assertEqual(storage.get("State", None), None)
-        self.assertEqual(storage.get("State", "1234"), None)
-        self.assertEqual(storage.get("State", state.id), state)
-        self.assertEqual(storage.get("State", "1234"), None)
-        self.assertEqual(storage.get(None, state.id), None)
-
-    def test_count(self):
-        """Test count method"""
-        storage = DBStorage()
-        state = State(name="California")
-        storage.new(state)
-        storage.save()
-        self.assertEqual(storage.count(State), 1)
-        self.assertEqual(storage.count(City), 0)
-        self.assertEqual(storage.count(None), 0)
-
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
@@ -106,10 +79,20 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        storage = FileStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(len(storage.all()), 1)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
+        storage = DBStorage()
+        state = State(name="California")
+        storage.new(state)
+        storage.save()
+        self.assertEqual(len(storage.all()), 1)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
@@ -130,7 +113,6 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(storage.get("State", None), None)
         self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get("State", state.id), state)
-        self.assertEqual(storage.get("State", "1234"), None)
         self.assertEqual(storage.get(None, state.id), None)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
