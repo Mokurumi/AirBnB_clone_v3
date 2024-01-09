@@ -14,7 +14,7 @@ from flask import jsonify, abort, request
                     strict_slashes=False)
 def get_places(city_id):
     """ Retrieves the list of all Place objects of a City """
-    city = storage.get("City", city_id)
+    city = storage.get(City, city_id)
     if city:
         places = []
         for place in city.places:
@@ -26,7 +26,7 @@ def get_places(city_id):
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_place(place_id):
     """ Retrieves a Place object """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if place:
         return jsonify(place.to_dict())
     abort(404)
@@ -36,7 +36,7 @@ def get_place(place_id):
                     strict_slashes=False)
 def delete_place(place_id):
     """ Deletes a Place object """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if place:
         storage.delete(place)
         storage.save()
@@ -48,14 +48,14 @@ def delete_place(place_id):
                     strict_slashes=False)
 def create_place(city_id):
     """ Creates a Place """
-    city = storage.get("City", city_id)
+    city = storage.get(City, city_id)
     if not city:
         abort(404)
     if not request.get_json():
         abort(400, "Not a JSON")
     if "user_id" not in request.get_json():
         abort(400, "Missing user_id")
-    user = storage.get("User", request.get_json()["user_id"])
+    user = storage.get(User, request.get_json()["user_id"])
     if not user:
         abort(404)
     if "name" not in request.get_json():
@@ -69,13 +69,14 @@ def create_place(city_id):
 @app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
 def update_place(place_id):
     """ Updates a Place object """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404)
     if not request.get_json():
         abort(400, "Not a JSON")
     for key, value in request.get_json().items():
-        if key not in ["id", "user_id", "city_id", "created_at", "updated_at"]:
+        attributes = ["id", "user_id", "city_id", "created_at", "updated_at"]
+        if key not in attributes:
             setattr(place, key, value)
     place.save()
     return jsonify(place.to_dict()), 200
