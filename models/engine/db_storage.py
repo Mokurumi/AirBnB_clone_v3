@@ -55,22 +55,16 @@ class DBStorage:
         """
         returns the object based on the class and its ID, or None if not found
         """
-        if cls not in classes.values():
-            return None
-
         if cls and id:
-            key = cls.__name__ + '.' + id
-            if key in self.__objects:
-                return self.__objects[key]
+            if cls in classes.values():
+                return self.__session.query(cls).filter(cls.id == id).first()
         return None
 
     def count(self, cls=None):
         """
         returns the number of objects in storage matching the given class
         """
-        if cls:
-            return len(self.all(cls))
-        return len(self.all())
+        return len(self.__session.query(cls).all())
 
     def new(self, obj):
         """add the object to the current database session"""
