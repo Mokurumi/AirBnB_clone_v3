@@ -12,7 +12,7 @@ from flask import jsonify, abort, request
 def get_users():
     """ Retrieves the list of all User objects """
     users = []
-    for user in storage.all("User").values():
+    for user in storage.all(User).values():
         users.append(user.to_dict())
     return jsonify(users)
 
