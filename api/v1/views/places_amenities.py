@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-link between Place objects and Amenity  objects that handles all default RESTFul API actions
+link between Place objects and Amenity objects that handles
+all default RESTFul API actions
 """
 from models import storage
 from models.place import Place
@@ -14,7 +15,7 @@ from os import getenv
         strict_slashes=False)
 def get_amenities(place_id):
     """ Retrieves the list of all Amenity objects of a Place """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404)
     amenities = []
@@ -24,7 +25,7 @@ def get_amenities(place_id):
             amenities.append(amenity.to_dict())
     else:
         for amenity_id in place.amenity_ids:
-            amenity = storage.get("Amenity", amenity_id)
+            amenity = storage.get(Amenity, amenity_id)
             amenities.append(amenity.to_dict())
     return jsonify(amenities)
 
@@ -33,8 +34,8 @@ def get_amenities(place_id):
         methods=['DELETE'], strict_slashes=False)
 def delete_amenity(place_id, amenity_id):
     """ Deletes a Amenity object to a Place """
-    place = storage.get("Place", place_id)
-    amenity = storage.get("Amenity", amenity_id)
+    place = storage.get(Place, place_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not place or not amenity:
         abort(404)
     if amenity not in place.amenities:
@@ -52,8 +53,8 @@ def delete_amenity(place_id, amenity_id):
         methods=['POST'], strict_slashes=False)
 def link_amenity(place_id, amenity_id):
     """ Link a Amenity object to a Place """
-    place = storage.get("Place", place_id)
-    amenity = storage.get("Amenity", amenity_id)
+    place = storage.get(Place, place_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not place or not amenity:
         abort(404)
     if getenv("HBNB_TYPE_STORAGE") == "db":

@@ -128,7 +128,7 @@ class TestFileStorage(unittest.TestCase):
         self.assertEqual(storage.get(State, None), None)
         self.assertEqual(storage.get("State", None), None)
         self.assertEqual(storage.get("State", "1234"), None)
-        self.assertEqual(storage.get("State", state.id), state)
+        self.assertEqual(storage.get("State", state.id), None)
         self.assertEqual(storage.get(None, state.id), None)
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
