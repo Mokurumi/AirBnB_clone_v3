@@ -41,28 +41,27 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """query on the current database session"""
+        """Query on the current database session"""
         new_dict = {}
         if cls:
-            for key, value in self.__session.query(cls).all():
-                new_dict[key] = value
+            if cls in classes.values():
+                for obj in self.__session.query(classes[cls]).all():
+                    new_dict[obj.__class__.__name__ + '.' + obj.id] = obj
         else:
-            for key, value in self.__session.query(cls).all():
-                new_dict[key] = value
+            for class_name, class_obj in classes.items():
+                for obj in self.__session.query(class_obj).all():
+                    new_dict[class_name + '.' + obj.id] = obj
         return new_dict
 
     def get(self, cls, id):
         """
-        returns the object based on the class and its ID, or None if not found
+        Return the object based on the class and ID, or None if not found
         """
         if cls not in classes.values():
             return None
 
-        if cls and id:
-            key = cls.__name__ + '.' + id
-            if key in self.__objects:
-                return self.__objects[key]
-        return None
+        key = cls.__name__ + '.' + id
+        return self.__session.query(cls).get(key)
 
     def count(self, cls=None):
         """
