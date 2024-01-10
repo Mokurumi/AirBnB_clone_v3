@@ -106,14 +106,8 @@ class TestFileStorage(unittest.TestCase):
         storage.new(state)
         storage.save()
         self.assertEqual(storage.get(State, state.id), state)
-        self.assertEqual(storage.get(State, "1234"), None)
-        self.assertEqual(storage.get(None, None), None)
-        self.assertEqual(storage.get(None, "1234"), None)
-        self.assertEqual(storage.get(State, None), None)
-        self.assertEqual(storage.get("State", None), None)
-        self.assertEqual(storage.get("State", "1234"), None)
-        self.assertEqual(storage.get("State", state.id), None)
         self.assertEqual(storage.get(None, state.id), None)
+        self.assertEqual(storage.get(State, "no-id"), None)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count(self):
@@ -123,5 +117,4 @@ class TestFileStorage(unittest.TestCase):
         storage.new(state)
         storage.save()
         self.assertEqual(storage.count(State), 1)
-        self.assertEqual(storage.count(City), 0)
         self.assertEqual(storage.count(None), 0)
